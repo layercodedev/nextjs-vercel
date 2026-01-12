@@ -67,15 +67,22 @@ Fill in your keys:
 | `KV_REST_API_URL` | No | Vercel KV URL (optional, for persistence) |
 | `KV_REST_API_TOKEN` | No | Vercel KV token (optional) |
 
-### 3. Run locally
+### 3. Run locally with the Layercode CLI
+
+The Layercode CLI creates a tunnel and auto-configures your webhook URL:
+
+```bash
+npx layercode login        # Authenticate (first time only)
+npx layercode tunnel       # Starts dev server + tunnel
+```
+
+Or run without webhooks (limited functionality):
 
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and click **Connect** to start a voice session.
-
-> **Note:** For local development, webhooks won't reach your machine unless you use a tunnel like [ngrok](https://ngrok.com). Message history falls back to in-memory storage.
 
 ## Deploy to Vercel
 
@@ -141,16 +148,10 @@ export function getKnowledgeBase(): KnowledgeBase {
 
 Edit `lib/ai.ts` to add streaming, tool calling, or switch models. See inline comments for extension points.
 
-## Next Steps
-
-- **Telephony** — Add phone support via Layercode
-- **RAG** — Connect vector search (Pinecone, Weaviate)
-- **Streaming** — Real-time token streaming for faster responses
-- **Tools** — Let the AI call functions and APIs
-
 ## Resources
 
 - [Layercode Docs](https://docs.layercode.com)
+- [Layercode CLI](https://docs.layercode.com/api-reference/cli)
 - [Vercel AI SDK](https://sdk.vercel.ai)
 - [Next.js Docs](https://nextjs.org/docs)
 
