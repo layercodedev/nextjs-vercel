@@ -1,8 +1,26 @@
+/**
+ * VOICE SESSION AUTHORIZATION ROUTE
+ * ==================================
+ * This route is the entry point for initiating a voice session.
+ *
+ * LIFECYCLE POSITION:
+ * 1. Client requests authorization here BEFORE connecting to voice
+ * 2. This route validates the user and obtains a session token from Layercode
+ * 3. Client uses the returned token to establish a WebSocket voice connection
+ * 4. Voice events then flow to /api/agent (see that route for event handling)
+ *
+ * DEVELOPER EXTENSION POINTS:
+ * - Add user authentication/authorization checks before calling Layercode
+ * - Log session initiation for analytics (user ID, timestamp, agent ID)
+ * - Implement rate limiting per user or organization
+ * - Add session metadata for tracking (e.g., source, device type)
+ */
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
-  // Here you could do any user authorization checks you need for your app
+  // EXTENSION POINT: Add user authentication checks here
+  // Example: Verify JWT, check user permissions, validate subscription status
   const endpoint = "https://api.layercode.com/v1/agents/web/authorize_session";
   const apiKey = process.env.LAYERCODE_API_KEY;
   if (!apiKey) {

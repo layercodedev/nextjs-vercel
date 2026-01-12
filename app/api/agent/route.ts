@@ -1,3 +1,25 @@
+/**
+ * VOICE AGENT WEBHOOK ROUTE
+ * ==========================
+ * This route receives all voice session events from Layercode.
+ * It is the primary handler for voice interactions after authorization.
+ *
+ * VOICE EVENT LIFECYCLE:
+ * 1. session.start  - Voice session begins (user connected)
+ * 2. message        - User speech transcribed and sent here for processing
+ * 3. session.update - Session state changes (optional handling)
+ * 4. session.end    - Voice session terminated (user disconnected)
+ *
+ * ENTRY POINT FOR VOICE EVENTS:
+ * All transcribed user speech arrives via POST with type='message'.
+ * The Layercode SDK handles speech-to-text; this route receives text.
+ *
+ * DEVELOPER EXTENSION POINTS:
+ * - Persist transcripts: Save messages in session.end or after each message
+ * - Trigger summarization: Call LLM to summarize in session.end handler
+ * - Add analytics: Log latency, message count, session duration
+ * - Add moderation: Filter user input before LLM, filter output before TTS
+ */
 export const dynamic = 'force-dynamic';
 
 import { createOpenAI } from '@ai-sdk/openai';
@@ -90,6 +112,8 @@ export const POST = async (request: Request) => {
 
   const { conversation_id, text: userText, turn_id, type } = requestBody;
 
+  // SESSION START: Reset conversation state for a fresh session
+  // EXTENSION POINT: Initialize analytics tracking, log session start time
   if (type === 'session.start') {
     await resetConversationMessages(conversation_id);
   }
@@ -105,6 +129,8 @@ export const POST = async (request: Request) => {
   await appendConversationMessages(conversation_id, [userMessage]);
 
   switch (type) {
+    // VOICE EVENT: session.start - User has connected to voice session
+    // Delivers welcome message via TTS
     case 'session.start':
       const message: LayercodeUIMessage = {
         id: turn_id,
@@ -119,9 +145,13 @@ export const POST = async (request: Request) => {
         stream.end();
       });
 
+    // VOICE EVENT: message - User speech has been transcribed
+    // This is where the main conversation logic happens
+    // EXTENSION POINT: Add content moderation on userText before LLM call
     case 'message':
       return streamResponse(requestBody, async ({ stream }) => {
         const conversationForModel = [...existingMessages, userMessage];
+        // EXTENSION POINT: Log user message for analytics or moderation review
 
         const { textStream } = streamText({
           model: openai('gpt-4o-mini'),
@@ -140,6 +170,8 @@ export const POST = async (request: Request) => {
               }));
 
             await appendConversationMessages(conversation_id, generatedMessages);
+            // EXTENSION POINT: Filter/moderate assistant response before TTS
+            // EXTENSION POINT: Log assistant response for analytics
             stream.end();
           }
         });
@@ -147,7 +179,12 @@ export const POST = async (request: Request) => {
         await stream.ttsTextStream(textStream);
       });
 
+    // VOICE EVENT: session.end - User has disconnected from voice session
+    // EXTENSION POINT: Persist full transcript to database here
+    // EXTENSION POINT: Trigger async summarization of the conversation
+    // EXTENSION POINT: Log session duration, message count, and other metrics
     case 'session.end':
+    // VOICE EVENT: session.update - Session state changed (e.g., mute/unmute)
     case 'session.update':
       return new Response('OK', { status: 200 });
   }
