@@ -32,7 +32,7 @@ Out of the box, this runs a **Layercode support agent**. Try asking:
 - "How do I get started?"
 - "What platforms do you support?"
 
-The agent's knowledge comes from `lib/knowledge.ts` — edit this file to make it your own.
+The agent's knowledge comes from [`lib/knowledge.ts`](./lib/knowledge.ts) — edit this file to make it your own.
 
 ## Getting Started
 
@@ -132,7 +132,7 @@ lib/
 
 ### Change the knowledge base
 
-Edit `lib/knowledge.ts` to add your own FAQs, product info, and content:
+Edit [`lib/knowledge.ts`](./lib/knowledge.ts) to add your own FAQs, product info, and content:
 
 ```ts
 export function getKnowledgeBase(): KnowledgeBase {
@@ -146,7 +146,7 @@ export function getKnowledgeBase(): KnowledgeBase {
 
 ### Extend the AI logic
 
-Edit `lib/ai.ts` to add streaming, tool calling, or switch models. See inline comments for extension points.
+Edit [`lib/ai.ts`](./lib/ai.ts) to add streaming, tool calling, or switch models. See inline comments for extension points.
 
 ## Resources
 
