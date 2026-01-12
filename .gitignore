@@ -45,3 +45,8 @@ package-lock.json
 yarn.lock
 .tmp
 .npm-cache
+
+# project docs
+.gitattributes
+agents.md
+prd.md
