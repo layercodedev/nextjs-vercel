@@ -11,7 +11,7 @@ This integration lets you deploy voice-enabled Next.js apps to Vercel with one c
 ## Features
 
 - **Voice conversations** — Real-time speech-to-text and text-to-speech
-- **Microphone selection** — Built-in device picker via `@layercode/react-sdk`
+- **Microphone selection** — Built-in device picker with persistence
 - **Speaking indicators** — Visual feedback when user or agent is speaking
 - **Streaming transcripts** — Live display with partial updates
 - **Message history** — Persisted via Vercel KV (in-memory fallback for dev)
@@ -22,6 +22,7 @@ This integration lets you deploy voice-enabled Next.js apps to Vercel with one c
 
 - [Next.js 16](https://nextjs.org) — App Router, React Server Components
 - [Layercode](https://layercode.com) — Voice AI infrastructure
+- [@layercode/react-sdk](https://github.com/layercodedev/layercode-react-sdk) — React hooks for voice sessions, speaking states, and mic selection
 - [Vercel AI SDK](https://sdk.vercel.ai) — AI model integration
 - [Vercel KV](https://vercel.com/storage/kv) — Redis-based session storage
 - [OpenAI](https://openai.com) — GPT-4o-mini for responses
