@@ -48,15 +48,21 @@ type AgentEvent = {
   content?: string;
 };
 
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">{children}</span>
+);
+
 const SpeakingIndicator = ({ label, isActive, icon: Icon }: { label: string; isActive: boolean; icon: ComponentType<{ className?: string }> }) => (
   <div
-    className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
-      isActive ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-50 text-gray-500'
+    className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-medium transition-all ${
+      isActive
+        ? 'border-[#34c759] bg-[#34c759]/10 text-[#1d1d1f]'
+        : 'border-[#d1d1d6] bg-white text-[#1d1d1f]'
     }`}
   >
-    <Icon className={`h-4 w-4 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+    <Icon className={`h-4 w-4 ${isActive ? 'text-[#34c759]' : 'text-[#86868b]'}`} />
     <span>{label}</span>
-    <span className={`ml-auto inline-flex h-2 w-2 rounded-full ${isActive ? 'animate-pulse bg-emerald-500' : 'bg-gray-300'}`} aria-hidden />
+    <span className={`ml-auto inline-flex h-2.5 w-2.5 rounded-full ${isActive ? 'animate-pulse bg-[#34c759]' : 'bg-[#d1d1d6]'}`} aria-hidden />
   </div>
 );
 
@@ -67,16 +73,16 @@ const MessageBubble = ({ message }: { message: Message }) => {
 
   if (message.role === 'system') {
     return (
-      <div className="flex justify-center">
-        <span className="text-xs text-gray-400 italic">{message.text}</span>
+      <div className="flex justify-center py-1">
+        <span className="text-xs text-gray-400">{message.text}</span>
       </div>
     );
   }
 
   if (message.role === 'user') {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl bg-emerald-500 px-4 py-2 text-white">
+      <div className="flex justify-start">
+        <div className="max-w-[80%] rounded-2xl bg-[#e5e5ea] px-4 py-2.5 text-[#1d1d1f]">
           <span className="whitespace-pre-wrap">{content}</span>
         </div>
       </div>
@@ -85,8 +91,8 @@ const MessageBubble = ({ message }: { message: Message }) => {
 
   // Assistant message
   return (
-    <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-2xl border border-gray-200 bg-white px-4 py-2 text-gray-800">
+    <div className="flex justify-end">
+      <div className="max-w-[80%] rounded-2xl bg-[#007aff] px-4 py-2.5 text-white">
         <span className="whitespace-pre-wrap">{content}</span>
       </div>
     </div>
@@ -236,6 +242,11 @@ export default function VoiceAgentDemo() {
     };
   }, [disconnect]);
 
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('[Layercode Debug] State changed - status:', status, 'isMuted:', isMuted, 'isSessionActive:', isSessionActive);
+  }, [status, isMuted, isSessionActive]);
+
   useEffect(() => {
     const el = listRef.current;
     if (!el) return;
@@ -254,45 +265,71 @@ export default function VoiceAgentDemo() {
     userChunksByTurn.current.clear();
     setMessages([]);
     setError(null);
+    console.log('[Layercode Debug] connect() called, current status:', status);
     try {
       await connect();
+      console.log('[Layercode Debug] connect() completed, new status:', status);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('[Layercode Debug] connect() error:', errorMessage);
       setMessages([{ role: 'system', text: `Failed to connect: ${errorMessage}` }]);
     }
   };
 
+  const handleDisconnect = async () => {
+    console.log('[Layercode Debug] disconnect() called, current status:', status, 'isMuted:', isMuted);
+    try {
+      await disconnect();
+      console.log('[Layercode Debug] disconnect() completed, status after:', status);
+    } catch (error) {
+      console.error('[Layercode Debug] disconnect() error:', error);
+    }
+  };
+
   const handleMicClick = () => {
-    if (!isSessionActive) return;
-    isMuted ? unmute() : mute();
+    if (!isSessionActive) {
+      console.log('[Layercode Debug] mute/unmute ignored - not connected');
+      return;
+    }
+    if (isMuted) {
+      console.log('[Layercode Debug] unmute() called, isMuted before:', isMuted);
+      unmute();
+      console.log('[Layercode Debug] unmute() completed, isMuted after:', isMuted);
+    } else {
+      console.log('[Layercode Debug] mute() called, isMuted before:', isMuted);
+      mute();
+      console.log('[Layercode Debug] mute() completed, isMuted after:', isMuted);
+    }
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
+    <div className="mx-auto max-w-2xl space-y-5 p-6">
       {error && (
-        <div className="flex items-center justify-between rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="flex items-center justify-between rounded-xl bg-[#ff3b30]/10 px-4 py-3 text-sm text-[#ff3b30]">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-4 text-red-500 hover:text-red-700"
+            className="ml-4 text-[#ff3b30] hover:opacity-70"
             aria-label="Dismiss error"
           >
             &times;
           </button>
         </div>
       )}
-      <section className="space-y-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+
+      {/* Controls Card */}
+      <section className="space-y-5 rounded-2xl bg-white p-6 shadow-sm">
         {/* Call controls */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
-            onClick={isSessionActive ? disconnect : handleConnectClick}
+            onClick={isSessionActive ? handleDisconnect : handleConnectClick}
             disabled={isConnecting}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-medium transition disabled:opacity-50 ${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-[15px] font-semibold transition-all disabled:opacity-50 ${
               isSessionActive
-                ? 'bg-rose-500 text-white hover:bg-rose-600'
-                : 'bg-emerald-500 text-white hover:bg-emerald-600'
+                ? 'bg-[#ff3b30] text-white hover:bg-[#ff3b30]/90'
+                : 'bg-[#34c759] text-white hover:bg-[#34c759]/90'
             }`}
           >
             {isSessionActive ? (
@@ -312,44 +349,48 @@ export default function VoiceAgentDemo() {
             type="button"
             onClick={handleMicClick}
             disabled={!isSessionActive}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#f5f5f7] px-5 py-3.5 text-[15px] font-semibold text-[#1d1d1f] transition-all hover:bg-[#e8e8ed] disabled:opacity-50"
           >
             {isMuted ? (
               <>
-                <MicOff className="h-5 w-5 text-rose-500" />
+                <MicOff className="h-5 w-5 text-[#ff3b30]" />
                 <span>Unmute</span>
               </>
             ) : (
               <>
-                <Mic className="h-5 w-5 text-emerald-500" />
+                <Mic className="h-5 w-5 text-[#34c759]" />
                 <span>Mute</span>
               </>
             )}
           </button>
         </div>
 
+        {/* Microphone selection */}
+        <div className="mic-select-wrapper space-y-2">
+          <MicrophoneSelect
+            agent={agent}
+            className="w-full rounded-xl bg-[#f5f5f7] px-4 py-3 text-[15px] text-[#1d1d1f] focus:outline-none focus:ring-2 focus:ring-[#007aff]"
+            containerClassName=""
+          />
+        </div>
+      </section>
+
+      {/* Conversation Card */}
+      <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <SectionLabel>Conversation</SectionLabel>
+        </div>
+
         {/* Speaking indicators */}
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 mb-3">
           <SpeakingIndicator label="You" isActive={userSpeaking} icon={User} />
           <SpeakingIndicator label="Agent" isActive={agentSpeaking} icon={Activity} />
         </div>
 
-        {/* Microphone selection */}
-        <MicrophoneSelect
-          agent={agent}
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          containerClassName="space-y-1"
-        />
-      </section>
-
-      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-3 flex items-center justify-between text-sm text-gray-500">
-          <span>Conversation</span>
-        </div>
-
-        <div ref={listRef} className="flex h-80 w-full flex-col gap-3 overflow-y-auto rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
+        {/* Messages */}
+        <div ref={listRef} className="flex h-[500px] w-full flex-col gap-2.5 overflow-y-auto rounded-xl border border-[#d1d1d6] bg-white p-4 text-[15px]">
           {messages.length === 0 ? (
-            <div className="text-gray-400">No messages yet. Start a session to see the live transcript.</div>
+            <div className="text-gray-400">No messages yet. Start a call to begin.</div>
           ) : (
             messages.map((message, index) => (
               <MessageBubble key={`${message.turnId ?? message.role}-${index}`} message={message} />
@@ -357,6 +398,21 @@ export default function VoiceAgentDemo() {
           )}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="flex justify-center gap-4 py-4 text-xs text-[#86868b]">
+        <a href="https://docs.layercode.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#1d1d1f] transition-colors">
+          Docs
+        </a>
+        <span>·</span>
+        <a href="https://layercode.com/dashboard" target="_blank" rel="noopener noreferrer" className="hover:text-[#1d1d1f] transition-colors">
+          Dashboard
+        </a>
+        <span>·</span>
+        <a href="https://github.com/layercodedev" target="_blank" rel="noopener noreferrer" className="hover:text-[#1d1d1f] transition-colors">
+          GitHub
+        </a>
+      </footer>
     </div>
   );
 }
