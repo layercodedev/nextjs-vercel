@@ -55,7 +55,11 @@ type WebhookRequest = {
 const SYSTEM_PROMPT = config.prompt;
 const WELCOME_MESSAGE = config.welcome_message;
 
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  throw new Error('OPENAI_API_KEY environment variable is not set');
+}
+const openai = createOpenAI({ apiKey });
 
 const CONVERSATION_TTL_SECONDS = 60 * 60 * 12; // 12 hours
 const isKvConfigured = Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
@@ -194,5 +198,8 @@ export const POST = async (request: Request) => {
     // VOICE EVENT: session.update - Session state changed (e.g., mute/unmute)
     case 'session.update':
       return new Response('OK', { status: 200 });
+
+    default:
+      return new Response('Unknown event type', { status: 400 });
   }
 };
