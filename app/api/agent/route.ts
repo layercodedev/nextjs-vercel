@@ -113,7 +113,12 @@ const resetConversationMessages = async (conversationId: string) => {
 
 export const POST = async (request: Request) => {
   const requestBody = (await request.json()) as WebhookRequest;
-  console.log('Webhook received from Layercode', requestBody);
+  console.log('Webhook received from Layercode', JSON.stringify({
+    type: requestBody.type,
+    conversation_id: requestBody.conversation_id,
+    turn_id: requestBody.turn_id,
+    timestamp: new Date().toISOString()
+  }));
 
   // Verify webhook signature
   const signature = request.headers.get('layercode-signature') || '';
