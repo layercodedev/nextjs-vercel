@@ -91,7 +91,7 @@ Open [http://localhost:3000](http://localhost:3000) and click **Connect** to sta
 ## Deploy to Vercel
 
 1. Click the **Deploy** button above
-2. Add environment variables in project settings
+2. Add environment variables in project settings, then redeploy your app for the changes to take effect
 3. Configure your Layercode agent's webhook URL to: `https://your-app.vercel.app/api/agent`
 
 > **Troubleshooting:** If webhooks aren't reaching your app, check Settings → Deployment Protection and ensure Vercel Authentication isn't blocking external requests. Your webhook secret still secures the endpoint.
