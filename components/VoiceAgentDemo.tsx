@@ -51,14 +51,47 @@ type AgentEvent = {
 const SpeakingIndicator = ({ label, isActive, icon: Icon }: { label: string; isActive: boolean; icon: ComponentType<{ className?: string }> }) => (
   <div
     className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
-      isActive ? 'border-emerald-500/60 bg-emerald-500/10 text-white' : 'border-neutral-800 bg-neutral-900/40 text-neutral-400'
+      isActive ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-50 text-gray-500'
     }`}
   >
-    <Icon className={`h-4 w-4 ${isActive ? 'text-emerald-300' : 'text-neutral-500'}`} />
+    <Icon className={`h-4 w-4 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`} />
     <span>{label}</span>
-    <span className={`ml-auto inline-flex h-2 w-2 rounded-full ${isActive ? 'animate-pulse bg-emerald-300' : 'bg-neutral-700'}`} aria-hidden />
+    <span className={`ml-auto inline-flex h-2 w-2 rounded-full ${isActive ? 'animate-pulse bg-emerald-500' : 'bg-gray-300'}`} aria-hidden />
   </div>
 );
+
+const MessageBubble = ({ message }: { message: Message }) => {
+  const content = message.role === 'user' && message.chunks?.length
+    ? message.chunks.map((chunk) => <span key={chunk.counter}>{chunk.text}</span>)
+    : message.text;
+
+  if (message.role === 'system') {
+    return (
+      <div className="flex justify-center">
+        <span className="text-xs text-gray-400 italic">{message.text}</span>
+      </div>
+    );
+  }
+
+  if (message.role === 'user') {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[80%] rounded-2xl bg-emerald-500 px-4 py-2 text-white">
+          <span className="whitespace-pre-wrap">{content}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Assistant message
+  return (
+    <div className="flex justify-start">
+      <div className="max-w-[80%] rounded-2xl border border-gray-200 bg-white px-4 py-2 text-gray-800">
+        <span className="whitespace-pre-wrap">{content}</span>
+      </div>
+    </div>
+  );
+};
 
 export default function VoiceAgentDemo() {
   const agentId = process.env.NEXT_PUBLIC_LAYERCODE_AGENT_ID ?? '';
@@ -234,48 +267,42 @@ export default function VoiceAgentDemo() {
     isMuted ? unmute() : mute();
   };
 
-  const getRoleLabel = (role: Role) => {
-    switch (role) {
-      case 'assistant':
-        return 'Agent';
-      case 'user':
-        return 'You';
-      default:
-        return 'System';
-    }
-  };
-
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6">
       {error && (
-        <div className="flex items-center justify-between rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <div className="flex items-center justify-between rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-4 text-red-300 hover:text-red-100"
+            className="ml-4 text-red-500 hover:text-red-700"
             aria-label="Dismiss error"
           >
             &times;
           </button>
         </div>
       )}
-      <section className="space-y-6 rounded-xl border border-neutral-800 bg-black/30 p-5">
+      <section className="space-y-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        {/* Call controls */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
             onClick={isSessionActive ? disconnect : handleConnectClick}
             disabled={isConnecting}
-            className="flex flex-1 items-center justify-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/50 px-4 py-2 text-white transition hover:border-neutral-500 disabled:opacity-50"
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-medium transition disabled:opacity-50 ${
+              isSessionActive
+                ? 'bg-rose-500 text-white hover:bg-rose-600'
+                : 'bg-emerald-500 text-white hover:bg-emerald-600'
+            }`}
           >
             {isSessionActive ? (
               <>
-                <PhoneOff className="h-4 w-4 text-rose-400" />
-                <span>Disconnect</span>
+                <PhoneOff className="h-5 w-5" />
+                <span>End Call</span>
               </>
             ) : (
               <>
-                <PhoneCall className="h-4 w-4 text-emerald-400" />
+                <PhoneCall className="h-5 w-5" />
                 <span>{connectLabel}</span>
               </>
             )}
@@ -285,55 +312,47 @@ export default function VoiceAgentDemo() {
             type="button"
             onClick={handleMicClick}
             disabled={!isSessionActive}
-            className="flex flex-1 items-center justify-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/50 px-4 py-2 text-white transition hover:border-neutral-500 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
           >
             {isMuted ? (
               <>
-                <MicOff className="h-4 w-4 text-rose-400" />
-                <span>Mic muted</span>
+                <MicOff className="h-5 w-5 text-rose-500" />
+                <span>Unmute</span>
               </>
             ) : (
               <>
-                <Mic className="h-4 w-4 text-emerald-400" />
-                <span>Mic on</span>
+                <Mic className="h-5 w-5 text-emerald-500" />
+                <span>Mute</span>
               </>
             )}
           </button>
         </div>
 
+        {/* Speaking indicators */}
         <div className="grid gap-3 sm:grid-cols-2">
           <SpeakingIndicator label="You" isActive={userSpeaking} icon={User} />
-          <SpeakingIndicator label="Agent speaking" isActive={agentSpeaking} icon={Activity} />
+          <SpeakingIndicator label="Agent" isActive={agentSpeaking} icon={Activity} />
         </div>
 
+        {/* Microphone selection */}
         <MicrophoneSelect
           agent={agent}
-          helperText="Pick an input before connecting."
-          className="w-full rounded-md border border-neutral-800 bg-neutral-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
-          containerClassName="space-y-2"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          containerClassName="space-y-1"
         />
-
-        <div className="text-sm text-neutral-400">
-          Session status: <span className="text-white capitalize">{status}</span>
-        </div>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-black/30 p-5">
-        <div className="mb-3 flex items-center justify-between text-sm text-neutral-400">
+      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex items-center justify-between text-sm text-gray-500">
           <span>Conversation</span>
         </div>
 
-        <div ref={listRef} className="h-80 w-full overflow-y-auto rounded-md border border-neutral-900 bg-neutral-950/40 p-3 text-sm">
+        <div ref={listRef} className="flex h-80 w-full flex-col gap-3 overflow-y-auto rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
           {messages.length === 0 ? (
-            <div className="text-neutral-500">No messages yet. Start a session to see the live transcript.</div>
+            <div className="text-gray-400">No messages yet. Start a session to see the live transcript.</div>
           ) : (
             messages.map((message, index) => (
-              <div key={`${message.turnId ?? message.role}-${index}`} className="mb-3 leading-relaxed">
-                <span className="text-sm font-medium text-neutral-400">{getRoleLabel(message.role)}:</span>{' '}
-                <span className="whitespace-pre-wrap text-neutral-100">
-                  {message.role === 'user' && message.chunks?.length ? message.chunks.map((chunk) => <span key={chunk.counter}>{chunk.text}</span>) : message.text}
-                </span>
-              </div>
+              <MessageBubble key={`${message.turnId ?? message.role}-${index}`} message={message} />
             ))
           )}
         </div>
