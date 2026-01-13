@@ -20,7 +20,7 @@ This integration lets you deploy voice-enabled Next.js apps to Vercel with one c
 
 ## Tech Stack
 
-- [Next.js 15](https://nextjs.org) — App Router, React Server Components
+- [Next.js 16](https://nextjs.org) — App Router, React Server Components
 - [Layercode](https://layercode.com) — Voice AI infrastructure
 - [Vercel AI SDK](https://sdk.vercel.ai) — AI model integration
 - [Vercel KV](https://vercel.com/storage/kv) — Redis-based session storage
