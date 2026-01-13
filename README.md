@@ -43,6 +43,7 @@ The agent's knowledge comes from [`lib/knowledge.ts`](./lib/knowledge.ts) — ed
 - Node.js 18+
 - [Layercode account](https://layercode.com) — for API key and agent setup
 - [OpenAI API key](https://platform.openai.com) — for text generation
+- (Optional) [Vercel KV](https://vercel.com/storage/kv) — for persistent message history
 
 ### 1. Clone and install
 
