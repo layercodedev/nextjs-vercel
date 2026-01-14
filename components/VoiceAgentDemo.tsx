@@ -227,6 +227,8 @@ export default function VoiceAgentDemo() {
       const errorMessage = err instanceof Error ? err.message : String(err);
       if (errorMessage.includes('insufficient_balance') || errorMessage.includes('402')) {
         setError('Your organization has insufficient funds. Please add funds to your Layercode account to continue.');
+      } else if (errorMessage.includes('Failed to authorize conversation')) {
+        setError('Authorization failed. Check that your environment variables are set in Vercel and your webhook URL is configured in the Layercode dashboard.');
       } else {
         setMessages((prev) => [...prev, { role: 'system', text: `Error: ${errorMessage}` }]);
       }
