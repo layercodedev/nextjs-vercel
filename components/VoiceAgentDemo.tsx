@@ -44,10 +44,12 @@ const LINK_MAP: Record<string, string> = {
   'our status page': 'https://statuspage.incident.io/layercode',
 };
 
-// Convert TTS-spoken URLs back to clickable links (e.g., "layercode dot com" → "layercode.com")
+// Convert TTS-spoken URLs/emails back to clickable links
 const SPOKEN_URL_MAP: Record<string, { display: string; url: string }> = {
   'layercode dot com': { display: 'layercode.com', url: 'https://layercode.com' },
   'docs dot layercode dot com': { display: 'docs.layercode.com', url: 'https://docs.layercode.com' },
+  'support at layercode dot com': { display: 'support@layercode.com', url: 'mailto:support@layercode.com' },
+  'support at layercode.com': { display: 'support@layercode.com', url: 'mailto:support@layercode.com' },
 };
 
 const linkifyText = (text: string): React.ReactNode => {
