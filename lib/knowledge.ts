@@ -90,9 +90,10 @@ telephony for phone-based voice applications.`
       },
       {
         question: 'How does billing work?',
-        answer: `Layercode offers a free tier for development and testing. Production usage
-is billed based on voice minutes processed and is billed per-second. There are no per-seat licenses or minimum
-commitments. Enterprise plans are available. You can view detailed usage in your dashboard.`
+        answer: `Layercode has simple, predictable pricing. You're billed per-second for active
+conversation time, and silence is free. Speech-to-text, text-to-speech, and infrastructure
+costs are all consolidated into one simple rate, so there are no surprise bills. You can
+get started with $100 in free credits, no credit card required.`
       },
       {
         question: 'Can I use my own AI model?',
