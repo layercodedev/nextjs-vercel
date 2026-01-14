@@ -11,7 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.62",
     "@layercode/node-server-sdk": "^1.2.2",
-    "@layercode/react-sdk": "^2.8.10",
+    "@layercode/react-sdk": "^2.8.11",
     "@vercel/kv": "^3.0.0",
     "ai": "^5.0.87",
     "lucide-react": "^0.553.0",
