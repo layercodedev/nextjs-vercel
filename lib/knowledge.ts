@@ -61,7 +61,7 @@ export interface KnowledgeBase {
  */
 export function getKnowledgeBase(): KnowledgeBase {
   return {
-    companyName: "Layercode",
+    companyName: 'Layercode',
 
     companyDescription: `Layercode is a voice AI platform that makes it easy to add conversational
 voice interfaces to any application. We handle the complex infrastructure of real-time audio
@@ -70,48 +70,48 @@ great experiences.`,
 
     faqs: [
       {
-        question: "What is Layercode?",
+        question: 'What is Layercode?',
         answer: `Layercode is a voice AI platform that enables developers to add voice interfaces
 to their applications. It provides SDKs for web and mobile, handles real-time audio streaming,
-and integrates with popular AI models for natural conversations.`,
+and integrates with popular AI models for natural conversations.`
       },
       {
-        question: "How do I get started with Layercode?",
-        answer: `Getting started is simple: 1) Sign up on the Layercode website and get your API key,
+        question: 'How do I get started with Layercode?',
+        answer: `Getting started is simple: 1) Sign up at layercode.com and get your API key,
 2) Install the Layercode SDK in your project, 3) Add the voice component to your UI,
 4) Configure your webhook endpoint to receive voice events. The entire setup takes about
-15 minutes for a basic integration.`,
+15 minutes for a basic integration.`
       },
       {
-        question: "What platforms does Layercode support?",
+        question: 'What platforms does Layercode support?',
         answer: `Layercode supports web applications (React, Next.js, Vue, vanilla JS),
 React Native for mobile, and server-side integrations via REST APIs. We also support
-telephony for phone-based voice applications.`,
+telephony for phone-based voice applications.`
       },
       {
-        question: "How does billing work?",
+        question: 'How does billing work?',
         answer: `Layercode offers a free tier for development and testing. Production usage
-is billed based on voice minutes processed. There are no per-seat licenses or minimum
-commitments. You can view detailed usage in your dashboard.`,
+is billed based on voice minutes processed and is billed per-second. There are no per-seat licenses or minimum
+commitments. Enterprise plans are available. You can view detailed usage in your dashboard.`
       },
       {
-        question: "Can I use my own AI model?",
+        question: 'Can I use my own AI model?',
         answer: `Yes! Layercode is model-agnostic. You can use OpenAI, Anthropic, Google,
 or any other AI provider. You control the AI logic in your own backend, and Layercode
-handles the voice layer. This gives you full flexibility over the conversation logic.`,
+handles the voice layer. This gives you full flexibility over the conversation logic.`
       },
       {
-        question: "Is Layercode secure?",
+        question: 'Is Layercode secure?',
         answer: `Security is a top priority. All audio is encrypted in transit, we don't
 store conversation audio by default, and you can configure data retention policies.
-We're SOC 2 compliant and offer enterprise security features for larger deployments.`,
+We're SOC 2 compliant and offer enterprise security features for larger deployments.`
       },
       {
         question: "What's the latency like?",
         answer: `Layercode is optimized for real-time conversations. Typical end-to-end
 latency (from user speech to AI response audio) is under 500ms, depending on your AI
-model's response time. We use edge infrastructure to minimize network latency.`,
-      },
+model's response time. We use edge infrastructure to minimize network latency.`
+      }
     ],
 
     productInfo: `Layercode provides:
@@ -124,10 +124,10 @@ model's response time. We use edge infrastructure to minimize network latency.`,
 - Analytics: Monitor usage, latency, and conversation quality`,
 
     supportInfo: `For support:
-- Check out the Layercode documentation
-- Email our support team
-- Enterprise support is available on Business and Enterprise plans
-- Check our status page for service updates`,
+- Documentation: docs.layercode.com
+- Email: support@layercode.com
+- Enterprise support: Available on Business and Enterprise plans
+- Status page: status.layercode.com`
   };
 }
 
@@ -139,9 +139,7 @@ model's response time. We use edge infrastructure to minimize network latency.`,
  * preferences and your specific use case.
  */
 export function formatKnowledgeForPrompt(knowledge: KnowledgeBase): string {
-  const faqSection = knowledge.faqs
-    .map((faq) => `Q: ${faq.question}\nA: ${faq.answer}`)
-    .join("\n\n");
+  const faqSection = knowledge.faqs.map((faq) => `Q: ${faq.question}\nA: ${faq.answer}`).join('\n\n');
 
   return `
 === KNOWLEDGE BASE ===
