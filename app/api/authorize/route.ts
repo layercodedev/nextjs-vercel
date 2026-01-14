@@ -67,6 +67,8 @@ export const POST = async (request: Request) => {
       );
     }
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json({
+      error: `Authorization failed. Check that your environment variables are set in Vercel and your webhook URL is configured in the Layercode dashboard. (${errorMessage})`
+    }, { status: 500 });
   }
 };
