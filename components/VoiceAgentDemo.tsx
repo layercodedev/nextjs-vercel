@@ -294,10 +294,12 @@ export default function VoiceAgentDemo() {
     if (isMuted) {
       console.log('[Layercode Debug] unmute() called, isMuted before:', isMuted);
       unmute();
+      appendSystemMessage('Unmuted');
       console.log('[Layercode Debug] unmute() completed, isMuted after:', isMuted);
     } else {
       console.log('[Layercode Debug] mute() called, isMuted before:', isMuted);
       mute();
+      appendSystemMessage('Muted');
       console.log('[Layercode Debug] mute() completed, isMuted after:', isMuted);
     }
   };

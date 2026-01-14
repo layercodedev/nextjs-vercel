@@ -76,16 +76,7 @@ Fill in your keys:
 | `KV_REST_API_URL` | No | Vercel KV URL (optional, for persistence) |
 | `KV_REST_API_TOKEN` | No | Vercel KV token (optional) |
 
-### 4. Run locally with the Layercode CLI
-
-The Layercode CLI creates a tunnel and auto-configures your webhook URL:
-
-```bash
-npx layercode login        # Authenticate (first time only)
-npx layercode tunnel       # Starts dev server + tunnel
-```
-
-Or run without webhooks (limited functionality):
+### 4. Run locally
 
 ```bash
 npm run dev
@@ -164,7 +155,6 @@ Modify TTL or swap storage backends in [`app/api/agent/route.ts`](./app/api/agen
 ## Resources
 
 - [Layercode Docs](https://docs.layercode.com)
-- [Layercode CLI](https://docs.layercode.com/api-reference/cli)
 - [Vercel AI SDK](https://sdk.vercel.ai)
 - [Next.js Docs](https://nextjs.org/docs)
 
