@@ -390,7 +390,9 @@ export default function VoiceAgentDemo() {
         {/* Messages */}
         <div ref={listRef} className="flex h-[500px] w-full flex-col gap-2.5 overflow-y-auto rounded-xl border border-[#d1d1d6] bg-white p-4 text-[15px]">
           {messages.length === 0 ? (
-            <div className="text-gray-400">No messages yet. Start a call to begin.</div>
+            <div className="text-gray-400">
+              {isConnecting ? 'Connecting to agent...' : 'No messages yet. Start a call to begin.'}
+            </div>
           ) : (
             messages.map((message, index) => (
               <MessageBubble key={`${message.turnId ?? message.role}-${index}`} message={message} />
