@@ -27,67 +27,6 @@ import { useLayercodeAgent, MicrophoneSelect } from '@layercode/react-sdk';
 
 type Role = 'user' | 'assistant' | 'system';
 
-const LINK_MAP: Record<string, string> = {
-  'Layercode website': 'https://dash.layercode.com/sign-up',
-  'sign up': 'https://dash.layercode.com/sign-up',
-  'Sign up': 'https://dash.layercode.com/sign-up',
-  'documentation': 'https://docs.layercode.com',
-  'the documentation': 'https://docs.layercode.com',
-  'Layercode documentation': 'https://docs.layercode.com',
-  'the Layercode documentation': 'https://docs.layercode.com',
-  'our documentation': 'https://docs.layercode.com',
-  'docs': 'https://docs.layercode.com',
-  'the docs': 'https://docs.layercode.com',
-  'support team': 'mailto:support@layercode.com',
-  'our support team': 'mailto:support@layercode.com',
-  'status page': 'https://statuspage.incident.io/layercode',
-  'our status page': 'https://statuspage.incident.io/layercode',
-};
-
-// Convert TTS-spoken URLs/emails back to clickable links
-const SPOKEN_URL_MAP: Record<string, { display: string; url: string }> = {
-  'layercode dot com': { display: 'layercode.com', url: 'https://layercode.com' },
-  'docs dot layercode dot com': { display: 'docs.layercode.com', url: 'https://docs.layercode.com' },
-  'support at layercode dot com': { display: 'support@layercode.com', url: 'mailto:support@layercode.com' },
-  'support at layercode.com': { display: 'support@layercode.com', url: 'mailto:support@layercode.com' },
-};
-
-const linkifyText = (text: string): React.ReactNode => {
-  // First, replace spoken URLs with proper format
-  let processed = text;
-  for (const [spoken, { display, url }] of Object.entries(SPOKEN_URL_MAP)) {
-    const regex = new RegExp(spoken, 'gi');
-    processed = processed.replace(regex, `__LINK__${display}__${url}__ENDLINK__`);
-  }
-
-  // Then handle phrase mappings
-  const pattern = new RegExp(`(__LINK__.+?__ENDLINK__|${Object.keys(LINK_MAP).join('|')})`, 'gi');
-  const parts = processed.split(pattern);
-
-  return parts.map((part, i) => {
-    // Handle spoken URL replacements
-    const linkMatch = part.match(/__LINK__(.+?)__(.+?)__ENDLINK__/);
-    if (linkMatch) {
-      return (
-        <a key={i} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="underline">
-          {linkMatch[1]}
-        </a>
-      );
-    }
-
-    // Handle phrase mappings
-    const url = LINK_MAP[part] || LINK_MAP[part.toLowerCase()];
-    if (url) {
-      return (
-        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="underline">
-          {part}
-        </a>
-      );
-    }
-    return part;
-  });
-};
-
 type TranscriptChunk = {
   counter: number;
   text: string;
@@ -130,9 +69,7 @@ const SpeakingIndicator = ({ label, isActive, icon: Icon }: { label: string; isA
 const MessageBubble = ({ message }: { message: Message }) => {
   const content = message.role === 'user' && message.chunks?.length
     ? message.chunks.map((chunk) => <span key={chunk.counter}>{chunk.text}</span>)
-    : message.role === 'assistant'
-      ? linkifyText(message.text)
-      : message.text;
+    : message.text;
 
   if (message.role === 'system') {
     return (
