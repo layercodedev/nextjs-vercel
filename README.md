@@ -25,7 +25,7 @@ This integration lets you deploy voice-enabled Next.js apps to Vercel with one c
 - [@layercode/react-sdk](https://github.com/layercodedev/layercode-react-sdk) — React hooks for voice sessions, speaking states, and mic selection
 - [Vercel AI SDK](https://sdk.vercel.ai) — AI model integration
 - [Vercel KV](https://vercel.com/storage/kv) — Redis-based session storage
-- [OpenAI](https://openai.com) — GPT-4o-mini for responses
+- [OpenAI](https://openai.com) — GPT-4.1-mini for responses
 
 ## Demo
 
